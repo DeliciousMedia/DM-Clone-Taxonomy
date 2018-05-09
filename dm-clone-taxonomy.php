@@ -3,7 +3,7 @@
  * Plugin Name: DM Clone Taxonomy
  * Plugin URI:  https://www.deliciousmedia.co.uk/
  * Description: Provides the WP CLI command clonetax, to clone taxonomy data including terms, term meta and post relationships.
- * Version:     1.0.0
+ * Version:     1.0.1
  * Author:      Delicious Media Limited
  * Author URI:  https://www.deliciousmedia.co.uk/
  * Text Domain: dm-clonetax
@@ -126,7 +126,7 @@ if ( class_exists( 'WP_CLI' ) ) {
 						}
 						WP_CLI::debug( ' - Inserting term meta, key: ' . esc_html( $meta_key ) . ', value: ' . esc_html( $value ) );
 						add_term_meta( $target_term['term_id'], $meta_key, $value, false );
-						$stats['mta_values']++;
+						$stats['meta_values']++;
 					}
 
 					$stats['meta_keys']++;

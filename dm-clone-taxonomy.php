@@ -3,7 +3,7 @@
  * Plugin Name: DM Clone Taxonomy
  * Plugin URI:  https://www.deliciousmedia.co.uk/
  * Description: Provides the WP CLI command clonetax, to clone taxonomy data including terms, term meta and post relationships.
- * Version:     1.0.1
+ * Version:     1.0.2
  * Author:      Delicious Media Limited
  * Author URI:  https://www.deliciousmedia.co.uk/
  * Text Domain: dm-clonetax
@@ -85,10 +85,11 @@ if ( class_exists( 'WP_CLI' ) ) {
 			$progress = WP_CLI\Utils\make_progress_bar( 'Cloning terms', $total_terms, 100 );
 
 			$stats = [
-				'terms'              => 0,
-				'meta_keys'          => 0,
-				'meta_values'        => 0,
-				'post_relationships' => 0,
+				'terms'               => 0,
+				'meta_pairs'          => 0,
+				'meta_values'         => 0,
+				'meta_values_skipped' => 0,
+				'post_relationships'  => 0,
 			];
 
 			foreach ( $source_terms as $id => $source_term ) {
@@ -122,6 +123,7 @@ if ( class_exists( 'WP_CLI' ) ) {
 					foreach ( $meta_values as $id => $value ) {
 						if ( in_array( $meta_key, $skip_meta_keys ) ) {
 							WP_CLI::debug( ' - Skipping term meta, key: ' . esc_html( $meta_key ) . ', value: ' . esc_html( $value ) );
+							$stats['meta_values_skipped']++;
 							continue;
 						}
 						WP_CLI::debug( ' - Inserting term meta, key: ' . esc_html( $meta_key ) . ', value: ' . esc_html( $value ) );
@@ -129,7 +131,7 @@ if ( class_exists( 'WP_CLI' ) ) {
 						$stats['meta_values']++;
 					}
 
-					$stats['meta_keys']++;
+					$stats['meta_pairs']++;
 				}
 
 				$source_term_posts = get_posts(
@@ -162,7 +164,7 @@ if ( class_exists( 'WP_CLI' ) ) {
 
 			$progress->finish();
 
-			WP_CLI::success( sprintf( 'Done! Cloned %s terms, with %s meta values for %s meta keys and with %s post relationships.', $stats['terms'], $stats['meta_values'], $stats['meta_keys'], $stats['post_relationships'] ) );
+			WP_CLI::success( sprintf( 'Done! Cloned %s terms, with %s meta values copied and %s skipped (total %s) and %s post relationships duplicated.', $stats['terms'], $stats['meta_values'], $stats['meta_values_skipped'], $stats['meta_pairs'], $stats['post_relationships'] ) );
 		}
 	);
 
